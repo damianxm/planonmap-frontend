@@ -19,6 +19,9 @@ jobs:
         with:
           submodules: true
           lfs: false
+      - name: Set env variables
+        run: |
+          sed -i "s|__API_URL__|${{ secrets.API_URL }}|g" src/environments/environment.prod.ts
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
