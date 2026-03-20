@@ -1,0 +1,16 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.mapContainer {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+
+  #osm-map {
+    flex: 1;
+    min-height: 0;
+  }
+}

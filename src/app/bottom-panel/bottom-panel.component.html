@@ -1,0 +1,65 @@
+@if (sessionId) {
+<div class="panel">
+  <div class="panel__location">
+    <div class="panel__pin">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+        <circle cx="12" cy="9" r="2.5" />
+      </svg>
+    </div>
+    @if (coords) {
+    <div class="panel__coords">
+      <span class="panel__coords-label">Location</span>
+      <span class="panel__coords-value">{{ formatCoord(coords.lat) }}, {{ formatCoord(coords.lng) }}</span>
+    </div>
+    } @else {
+    <div class="panel__hint">
+      <span class="panel__hint-title">Add marker</span>
+      <span class="panel__hint-text">Click on the map to pick a location</span>
+    </div>
+    }
+  </div>
+
+  <div class="panel__divider"></div>
+
+  <div class="panel__form">
+    <div class="panel__field">
+      <label class="form__label" for="marker-name">Name</label>
+      <input
+        id="marker-name"
+        class="form__input"
+        type="text"
+        placeholder="e.g. Parking, Viewpoint..."
+        [(ngModel)]="nameInput"
+        (keyup.enter)="addMarker()"
+        [disabled]="!coords"
+      />
+    </div>
+    <div class="panel__field">
+      <label class="form__label" for="marker-desc">Description</label>
+      <input
+        id="marker-desc"
+        class="form__input"
+        type="text"
+        placeholder="Optional description..."
+        [(ngModel)]="descriptionInput"
+        (keyup.enter)="addMarker()"
+        [disabled]="!coords"
+      />
+    </div>
+  </div>
+
+  <button
+    class="btn btn--primary"
+    (click)="addMarker()"
+    [disabled]="!canSubmit()"
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="8" x2="12" y2="16" />
+      <line x1="8" y1="12" x2="16" y2="12" />
+    </svg>
+    @if (isSubmitting()) { Adding... } @else { Add marker }
+  </button>
+</div>
+}

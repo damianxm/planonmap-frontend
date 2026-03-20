@@ -1,0 +1,189 @@
+<aside class="panel">
+  <div class="panel__drag-handle"></div>
+
+  @switch (currentView()) {
+
+  @case (PanelView.Home) {
+  <div class="panel__section panel__section--home">
+    @if (activeSession.isRestoring()) {
+    <div class="panel__restoring">Restoring session...</div>
+    }
+    <div class="panel__brand">
+      <div class="panel__brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+          <circle cx="12" cy="9" r="2.5" />
+        </svg>
+      </div>
+      <h1 class="panel__title">PlanOnMap</h1>
+    </div>
+    <p class="panel__subtitle">Share a map in real time</p>
+
+    <div class="panel__actions">
+      <button class="btn btn--primary" (click)="navigateTo(PanelView.CreateForm)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="16" />
+          <line x1="8" y1="12" x2="16" y2="12" />
+        </svg>
+        Create session
+      </button>
+      <button class="btn btn--secondary" (click)="navigateTo(PanelView.JoinForm)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+          <polyline points="10 17 15 12 10 7" />
+          <line x1="15" y1="12" x2="3" y2="12" />
+        </svg>
+        Join session
+      </button>
+    </div>
+  </div>
+  }
+
+  @case (PanelView.CreateForm) {
+  <div class="panel__section">
+    <button class="panel__back" (click)="navigateTo(PanelView.Home)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+      Back
+    </button>
+    <div class="panel__header">
+      <div class="panel__step-icon panel__step-icon--create">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="16" />
+          <line x1="8" y1="12" x2="16" y2="12" />
+        </svg>
+      </div>
+      <h2 class="panel__heading">New session</h2>
+      <p class="panel__desc">Enter a session name — a shareable code will be generated automatically.</p>
+    </div>
+    <div class="panel__form">
+      <label class="form__label" for="create-user-name">Your name</label>
+      <input id="create-user-name" class="form__input" type="text" placeholder="e.g. John"
+        [(ngModel)]="userNameInput" autofocus />
+      <label class="form__label" for="session-name">Session name</label>
+      <input id="session-name" class="form__input" type="text" placeholder="e.g. Mountain Trip"
+        [(ngModel)]="sessionNameInput" (keyup.enter)="createSession()" />
+      @if (errorMessage()) {
+      <p class="form__error">{{ errorMessage() }}</p>
+      }
+      <button class="btn btn--primary btn--full" (click)="createSession()" [disabled]="!sessionNameInput.trim() || !userNameInput.trim() || isLoading()">
+        @if (isLoading()) { Creating... } @else { Create session }
+      </button>
+    </div>
+  </div>
+  }
+
+  @case (PanelView.JoinForm) {
+  <div class="panel__section">
+    <button class="panel__back" (click)="navigateTo(PanelView.Home)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+      Back
+    </button>
+    <div class="panel__header">
+      <div class="panel__step-icon panel__step-icon--join">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+          <polyline points="10 17 15 12 10 7" />
+          <line x1="15" y1="12" x2="3" y2="12" />
+        </svg>
+      </div>
+      <h2 class="panel__heading">Join session</h2>
+      <p class="panel__desc">Enter the session code shared by the host.</p>
+    </div>
+    <div class="panel__form">
+      <label class="form__label" for="join-user-name">Your name</label>
+      <input id="join-user-name" class="form__input" type="text" placeholder="e.g. John"
+        [(ngModel)]="userNameInput" autofocus />
+      <label class="form__label" for="join-code">Session code</label>
+      <input id="join-code" class="form__input form__input--code" type="text" placeholder="e.g. AB12"
+        [(ngModel)]="joinCodeInput" (keyup.enter)="joinSession()" />
+      @if (errorMessage()) {
+      <p class="form__error">{{ errorMessage() }}</p>
+      }
+      <button class="btn btn--secondary btn--full" (click)="joinSession()" [disabled]="!joinCodeInput.trim() || !userNameInput.trim() || isLoading()">
+        @if (isLoading()) { Joining... } @else { Join }
+      </button>
+    </div>
+  </div>
+  }
+
+  @case (PanelView.SessionExpired) {
+  <div class="panel__section panel__section--expired">
+    <div class="panel__expired-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+      </svg>
+    </div>
+    <h2 class="panel__heading">Session expired</h2>
+    <p class="panel__desc">Your previous session is no longer available. Create a new one to continue.</p>
+    <div class="panel__actions">
+      <button class="btn btn--primary btn--full" (click)="goCreateAfterExpiry()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="16" />
+          <line x1="8" y1="12" x2="16" y2="12" />
+        </svg>
+        Create new session
+      </button>
+      <button class="btn btn--secondary btn--full" (click)="navigateTo(PanelView.Home)">
+        Back to home
+      </button>
+    </div>
+  </div>
+  }
+
+  @case (PanelView.SessionActive) {
+  <div class="panel__section panel__section--active">
+    <div class="panel__status">
+      <span class="panel__status-dot"></span>
+      Session active
+    </div>
+
+    <div class="panel__header">
+      <h2 class="panel__heading">{{ activeSession.sessionName() }}</h2>
+      <p class="panel__desc">Share the code with friends so they can join.</p>
+      <div class="panel__code-block">
+        <span class="panel__code">{{ activeSession.sessionCode() }}</span>
+        <button class="btn btn--icon" (click)="copyCode()" title="Copy code">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" />
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="panel__participants">
+      <h3 class="panel__participants-title">Participants ({{ activeSession.participants().length }})</h3>
+      <ul class="panel__participants-list">
+        @for (p of activeSession.participants(); track p.userId) {
+        <li class="participant">
+          <div class="participant__avatar">{{ p.displayName[0].toUpperCase() }}</div>
+          <span class="participant__name">{{ p.displayName }}</span>
+          @if (p.isHost) {
+          <span class="participant__badge">host</span>
+          }
+        </li>
+        } @empty {
+        <li class="participant participant--empty">No participants</li>
+        }
+      </ul>
+    </div>
+
+    <app-chat [sessionId]="activeSession.sessionId()" />
+
+    <button class="btn btn--danger btn--full" (click)="leaveSession()">
+      Leave session
+    </button>
+  </div>
+  }
+
+  }
+
+</aside>

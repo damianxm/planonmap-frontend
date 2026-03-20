@@ -1,0 +1,29 @@
+<app-map
+  [sessionId]="activeSession.sessionId()"
+  (mapClick)="pendingCoords.set($event)"
+></app-map>
+
+<button class="fab-toggle" (click)="panelOpen.set(!panelOpen())" [class.is-open]="panelOpen()">
+  <svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+  </svg>
+  <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+  <span class="fab-toggle__label">
+    @if (activeSession.sessionName()) {
+      {{ activeSession.sessionName() }}
+    } @else {
+      PlanOnMap
+    }
+  </span>
+</button>
+
+<app-side-panel [mobileOpen]="panelOpen()"></app-side-panel>
+<app-bottom-panel
+  [sessionId]="activeSession.sessionId()"
+  [coords]="pendingCoords()"
+  (coordsConsumed)="pendingCoords.set(null)"
+></app-bottom-panel>
+
+<router-outlet />

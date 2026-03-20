@@ -1,0 +1,80 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+// ── Mobile toggle FAB ─────────────────────────────────────────────────────────
+
+.fab-toggle {
+  display: none;
+
+  @media (max-width: 640px) {
+    display: flex;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    z-index: 1100;
+    height: 48px;
+    border-radius: 24px;
+    border: none;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    color: #1e293b;
+    cursor: pointer;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 0 18px;
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.14),
+      0 0 0 1px rgba(255, 255, 255, 0.7);
+    transition: background 0.2s ease, color 0.2s ease;
+
+    svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .icon-menu {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .icon-close {
+      opacity: 0;
+      transform: scale(0.5) rotate(-45deg);
+      position: absolute;
+    }
+
+    .fab-toggle__label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+      text-align: left;
+    }
+
+    &.is-open {
+      background: rgba(254, 242, 242, 0.92);
+      color: #ef4444;
+
+      .icon-menu {
+        opacity: 0;
+        transform: scale(0.5) rotate(45deg);
+      }
+
+      .icon-close {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+        position: relative;
+      }
+    }
+  }
+}
