@@ -11,7 +11,7 @@ https://planonmap.damian-m.com/
 
 | Angular 21
 | TypeScript 5.9
-| Leaflet
+| OpenFreeMap, OpenStreetMap, Leaflet
 | SignalR
 | SCSS 
 
