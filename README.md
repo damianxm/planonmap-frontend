@@ -1,7 +1,8 @@
 # PlanOnMap
+Real-time collaborative map application built on a microservices architecture. It allows users to create new sessions or join existing ones, where they can place markers with descriptions on a shared map and communicate instantly via a real-time chat. The system does not require account registration, as authentication is handled through cookies.
 
-Real-time collaborative map planning application built on a microservices architecture. Enables users to create or join sessions, place markers with description on a shared map, and communicate via real-time chat — all without requiring account registration thanks to cookie-based authentication.
-
+# Live demo:
+https://planonmap.damian-m.com/
 ---
 
 # Tech Stack
