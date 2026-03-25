@@ -79,9 +79,14 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   private addLeafletMarker(marker: MarkerDto): void {
     if (this.leafletMarkers.has(marker.id)) return;
-    const popup = marker.description
-      ? `<b>${marker.name}</b><br>${marker.description}`
-      : marker.name;
+    const popup = document.createElement('div');
+    const nameEl = document.createElement('b');
+    nameEl.textContent = marker.name;
+    popup.appendChild(nameEl);
+    if (marker.description) {
+      popup.appendChild(document.createElement('br'));
+      popup.appendChild(document.createTextNode(marker.description));
+    }
     const lm = L.marker([marker.latitude, marker.longitude])
       .addTo(this.map)
       .bindPopup(popup);

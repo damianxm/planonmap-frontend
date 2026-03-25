@@ -62,10 +62,10 @@
     <div class="panel__form">
       <label class="form__label" for="create-user-name">Your name</label>
       <input id="create-user-name" class="form__input" type="text" placeholder="e.g. John"
-        [(ngModel)]="userNameInput" autofocus />
+        maxlength="50" [(ngModel)]="userNameInput" autofocus />
       <label class="form__label" for="session-name">Session name</label>
       <input id="session-name" class="form__input" type="text" placeholder="e.g. Mountain Trip"
-        [(ngModel)]="sessionNameInput" (keyup.enter)="createSession()" />
+        maxlength="100" [(ngModel)]="sessionNameInput" (keyup.enter)="createSession()" />
       @if (errorMessage()) {
       <p class="form__error">{{ errorMessage() }}</p>
       }
@@ -98,10 +98,10 @@
     <div class="panel__form">
       <label class="form__label" for="join-user-name">Your name</label>
       <input id="join-user-name" class="form__input" type="text" placeholder="e.g. John"
-        [(ngModel)]="userNameInput" autofocus />
+        maxlength="50" [(ngModel)]="userNameInput" autofocus />
       <label class="form__label" for="join-code">Session code</label>
       <input id="join-code" class="form__input form__input--code" type="text" placeholder="e.g. AB12"
-        [(ngModel)]="joinCodeInput" (keyup.enter)="joinSession()" />
+        maxlength="20" [(ngModel)]="joinCodeInput" (keyup.enter)="joinSession()" />
       @if (errorMessage()) {
       <p class="form__error">{{ errorMessage() }}</p>
       }
