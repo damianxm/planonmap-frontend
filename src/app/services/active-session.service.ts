@@ -1,12 +1,14 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { SessionService, ParticipantDto } from './session.service';
+import { ChatService } from './chat.service';
 
 const STORAGE_KEY = 'infomap_session_id';
 
 @Injectable({ providedIn: 'root' })
 export class ActiveSessionService {
   private readonly sessionService = inject(SessionService);
+  private readonly chatService = inject(ChatService);
 
   readonly sessionId = signal('');
   readonly sessionCode = signal('');
@@ -17,6 +19,13 @@ export class ActiveSessionService {
 
   constructor() {
     this.tryRestore();
+
+    this.chatService.systemMessage$.subscribe(() => {
+      const id = this.sessionId();
+      if (id) {
+        this.sessionService.getParticipants(id).subscribe(p => this.participants.set(p));
+      }
+    });
   }
 
   async create(name: string, displayName: string): Promise<void> {
