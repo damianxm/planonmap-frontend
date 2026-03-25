@@ -8,14 +8,16 @@ https://planonmap.damian-m.com/
 # Tech Stack
 
 # Frontend
+https://github.com/damianxm/planonmap-frontend
 
 | Angular 21
-| TypeScript 5.9
+| TypeScript
 | OpenFreeMap, OpenStreetMap, Leaflet
 | SignalR
 | SCSS 
 
 # Backend
+https://github.com/damianxm/planonmap-microservices-backend
 
 | ASP.NET Core 10
 | .NET Aspire
