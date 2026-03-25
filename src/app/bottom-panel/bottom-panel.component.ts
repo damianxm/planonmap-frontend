@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, inject, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MapItemsService } from '../services/mapitems.service';
 import { MapClickEvent } from '../map/map.component';
@@ -8,7 +8,8 @@ import { MapClickEvent } from '../map/map.component';
   standalone: true,
   imports: [FormsModule],
   templateUrl: './bottom-panel.component.html',
-  styleUrl: './bottom-panel.component.scss'
+  styleUrl: './bottom-panel.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BottomPanelComponent implements OnChanges {
   @Input() sessionId = '';
@@ -21,10 +22,10 @@ export class BottomPanelComponent implements OnChanges {
   descriptionInput = '';
   isSubmitting = signal(false);
 
-
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['coords'] && this.coords) {
-      // Auto-focus name input when coords are selected
+    if (changes['coords'] && !this.coords) {
+      this.nameInput = '';
+      this.descriptionInput = '';
     }
   }
 

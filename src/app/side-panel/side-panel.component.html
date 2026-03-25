@@ -9,8 +9,8 @@
     <div class="panel__restoring">Restoring session...</div>
     }
     <div class="panel__brand">
-      <div class="panel__brand-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="panel__brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
           <circle cx="12" cy="9" r="2.5" />
         </svg>
@@ -21,7 +21,7 @@
 
     <div class="panel__actions">
       <button class="btn btn--primary" (click)="navigateTo(PanelView.CreateForm)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <circle cx="12" cy="12" r="10" />
           <line x1="12" y1="8" x2="12" y2="16" />
           <line x1="8" y1="12" x2="16" y2="12" />
@@ -29,7 +29,7 @@
         Create session
       </button>
       <button class="btn btn--secondary" (click)="navigateTo(PanelView.JoinForm)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
           <polyline points="10 17 15 12 10 7" />
           <line x1="15" y1="12" x2="3" y2="12" />
@@ -42,15 +42,15 @@
 
   @case (PanelView.CreateForm) {
   <div class="panel__section">
-    <button class="panel__back" (click)="navigateTo(PanelView.Home)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <button class="panel__back" (click)="navigateTo(PanelView.Home)" aria-label="Back to home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <polyline points="15 18 9 12 15 6" />
       </svg>
       Back
     </button>
     <div class="panel__header">
-      <div class="panel__step-icon panel__step-icon--create">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="panel__step-icon panel__step-icon--create" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <circle cx="12" cy="12" r="10" />
           <line x1="12" y1="8" x2="12" y2="16" />
           <line x1="8" y1="12" x2="16" y2="12" />
@@ -67,7 +67,7 @@
       <input id="session-name" class="form__input" type="text" placeholder="e.g. Mountain Trip"
         maxlength="100" [(ngModel)]="sessionNameInput" (keyup.enter)="createSession()" />
       @if (errorMessage()) {
-      <p class="form__error">{{ errorMessage() }}</p>
+      <p class="form__error" role="alert">{{ errorMessage() }}</p>
       }
       <button class="btn btn--primary btn--full" (click)="createSession()" [disabled]="!sessionNameInput.trim() || !userNameInput.trim() || isLoading()">
         @if (isLoading()) { Creating... } @else { Create session }
@@ -78,15 +78,15 @@
 
   @case (PanelView.JoinForm) {
   <div class="panel__section">
-    <button class="panel__back" (click)="navigateTo(PanelView.Home)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <button class="panel__back" (click)="navigateTo(PanelView.Home)" aria-label="Back to home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <polyline points="15 18 9 12 15 6" />
       </svg>
       Back
     </button>
     <div class="panel__header">
-      <div class="panel__step-icon panel__step-icon--join">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="panel__step-icon panel__step-icon--join" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
           <polyline points="10 17 15 12 10 7" />
           <line x1="15" y1="12" x2="3" y2="12" />
@@ -103,7 +103,7 @@
       <input id="join-code" class="form__input form__input--code" type="text" placeholder="e.g. AB12"
         maxlength="20" [(ngModel)]="joinCodeInput" (keyup.enter)="joinSession()" />
       @if (errorMessage()) {
-      <p class="form__error">{{ errorMessage() }}</p>
+      <p class="form__error" role="alert">{{ errorMessage() }}</p>
       }
       <button class="btn btn--secondary btn--full" (click)="joinSession()" [disabled]="!joinCodeInput.trim() || !userNameInput.trim() || isLoading()">
         @if (isLoading()) { Joining... } @else { Join }
@@ -114,8 +114,8 @@
 
   @case (PanelView.SessionExpired) {
   <div class="panel__section panel__section--expired">
-    <div class="panel__expired-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+    <div class="panel__expired-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
         <circle cx="12" cy="12" r="10" />
         <polyline points="12 6 12 12 16 14" />
       </svg>
@@ -124,7 +124,7 @@
     <p class="panel__desc">Your previous session is no longer available. Create a new one to continue.</p>
     <div class="panel__actions">
       <button class="btn btn--primary btn--full" (click)="goCreateAfterExpiry()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <circle cx="12" cy="12" r="10" />
           <line x1="12" y1="8" x2="12" y2="16" />
           <line x1="8" y1="12" x2="16" y2="12" />
@@ -140,8 +140,8 @@
 
   @case (PanelView.SessionActive) {
   <div class="panel__section panel__section--active">
-    <div class="panel__status">
-      <span class="panel__status-dot"></span>
+    <div class="panel__status" role="status" aria-live="polite">
+      <span class="panel__status-dot" aria-hidden="true"></span>
       Session active
     </div>
 
@@ -149,9 +149,9 @@
       <h2 class="panel__heading">{{ activeSession.sessionName() }}</h2>
       <p class="panel__desc">Share the code with friends so they can join.</p>
       <div class="panel__code-block">
-        <span class="panel__code">{{ activeSession.sessionCode() }}</span>
-        <button class="btn btn--icon" (click)="copyCode()" title="Copy code">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <span class="panel__code" aria-label="Session code: {{ activeSession.sessionCode() }}">{{ activeSession.sessionCode() }}</span>
+        <button class="btn btn--icon" (click)="copyCode()" aria-label="Copy session code">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <rect x="9" y="9" width="13" height="13" rx="2" />
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
           </svg>
@@ -161,10 +161,10 @@
 
     <div class="panel__participants">
       <h3 class="panel__participants-title">Participants ({{ activeSession.participants().length }})</h3>
-      <ul class="panel__participants-list">
+      <ul class="panel__participants-list" aria-label="Session participants">
         @for (p of activeSession.participants(); track p.userId) {
         <li class="participant">
-          <div class="participant__avatar">{{ p.displayName[0].toUpperCase() }}</div>
+          <div class="participant__avatar" aria-hidden="true">{{ p.displayName?.[0]?.toUpperCase() ?? '?' }}</div>
           <span class="participant__name">{{ p.displayName }}</span>
           @if (p.isHost) {
           <span class="participant__badge">host</span>

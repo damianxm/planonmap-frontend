@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, effect, Input, HostBinding } from '@angular/core';
+import { Component, signal, computed, inject, effect, Input, HostBinding, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ChatComponent } from './chat/chat.component';
 import { ActiveSessionService } from '../services/active-session.service';
@@ -16,14 +16,15 @@ export enum PanelView {
   standalone: true,
   imports: [FormsModule, ChatComponent],
   templateUrl: './side-panel.component.html',
-  styleUrl: './side-panel.component.scss'
+  styleUrl: './side-panel.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SidePanelComponent {
   readonly PanelView = PanelView;
 
   readonly activeSession = inject(ActiveSessionService);
 
-  @Input() mobileOpen = false;
+  @Input() mobileOpen: boolean = false;
   @HostBinding('class.is-mobile-open') get isMobileOpen() { return this.mobileOpen; }
 
   currentView = signal<PanelView>(PanelView.Home);

@@ -1,22 +1,22 @@
 <div class="chat">
 
   <div class="chat__messages" #messagesContainer>
-    @if (messages.length === 0) {
+    @if (messages().length === 0) {
       <div class="chat__empty">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
         </svg>
         <span>No messages yet. Say something!</span>
       </div>
     }
 
-    @for (msg of messages; track msg.id) {
+    @for (msg of messages(); track msg.id) {
       @if (msg.type === 'system') {
-        <div class="chat__system">{{ msg.content }}</div>
+        <div class="chat__system" role="status">{{ msg.content }}</div>
       } @else {
         <div class="chat__message" [class.chat__message--own]="msg.own">
           @if (!msg.own) {
-            <div class="chat__avatar">{{ avatarLetter(msg.senderName!) }}</div>
+            <div class="chat__avatar" aria-hidden="true">{{ avatarLetter(msg.senderName!) }}</div>
           }
           <div class="chat__bubble-wrap">
             <span class="chat__author">{{ msg.senderName }}</span>
@@ -38,9 +38,15 @@
       [(ngModel)]="messageInput"
       (keyup.enter)="sendMessage()"
       maxlength="500"
+      aria-label="Message input"
     />
-    <button class="chat__send" (click)="sendMessage()" [disabled]="!messageInput.trim() || sendCooldown" title="Send">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <button
+      class="chat__send"
+      (click)="sendMessage()"
+      [disabled]="!messageInput.trim() || sendCooldown()"
+      aria-label="Send message"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <line x1="22" y1="2" x2="11" y2="13" />
         <polygon points="22 2 15 22 11 13 2 9 22 2" />
       </svg>

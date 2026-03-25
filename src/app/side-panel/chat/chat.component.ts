@@ -8,11 +8,14 @@ import {
   ElementRef,
   AfterViewChecked,
   inject,
-  ChangeDetectorRef
+  signal,
+  ChangeDetectionStrategy,
+  DestroyRef
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import { Subscription, take } from 'rxjs';
+import { take, timer } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ChatService, ChatMessageDto } from '../../services/chat.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -30,40 +33,38 @@ export interface DisplayMessage {
   standalone: true,
   imports: [FormsModule, DatePipe],
   templateUrl: './chat.component.html',
-  styleUrl: './chat.component.scss'
+  styleUrl: './chat.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChatComponent implements OnChanges, OnDestroy, AfterViewChecked {
   @Input() sessionId = '';
-  @Input() userName = '';
 
   @ViewChild('messagesEnd') private messagesEnd!: ElementRef<HTMLDivElement>;
 
   private readonly chatService = inject(ChatService);
   private readonly authService = inject(AuthService);
-  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
 
-  messages: DisplayMessage[] = [];
+  readonly messages = signal<DisplayMessage[]>([]);
+  readonly sendCooldown = signal(false);
   messageInput = '';
-  sendCooldown = false;
   private shouldScroll = false;
   private currentUserId = '';
   private currentSessionId = '';
-  private readonly subs = new Subscription();
 
   constructor() {
     this.authService.getMe().pipe(take(1)).subscribe(me => {
       this.currentUserId = me.anonymousId;
     });
 
-    this.subs.add(
-      this.chatService.message$.subscribe(msg => this.onMessage(msg))
-    );
-    this.subs.add(
-      this.chatService.systemMessage$.subscribe(text => this.onSystemMessage(text))
-    );
-    this.subs.add(
-      this.chatService.history$.subscribe(page => this.onHistory(page.items))
-    );
+    this.chatService.message$.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(msg => this.onMessage(msg));
+
+    this.chatService.systemMessage$.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(text => this.onSystemMessage(text));
+
+    this.chatService.history$.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(page => this.onHistory(page.items));
   }
 
   async ngOnChanges(changes: SimpleChanges): Promise<void> {
@@ -78,14 +79,13 @@ export class ChatComponent implements OnChanges, OnDestroy, AfterViewChecked {
 
     if (!next) return;
 
-    this.messages = [];
+    this.messages.set([]);
     await this.chatService.connect();
     await this.chatService.joinSession(next);
     this.currentSessionId = next;
   }
 
   async ngOnDestroy(): Promise<void> {
-    this.subs.unsubscribe();
     if (this.currentSessionId) {
       await this.chatService.leaveSession(this.currentSessionId);
     }
@@ -93,13 +93,10 @@ export class ChatComponent implements OnChanges, OnDestroy, AfterViewChecked {
 
   async sendMessage(): Promise<void> {
     const text = this.messageInput.trim();
-    if (!text || !this.currentSessionId || this.sendCooldown) return;
+    if (!text || !this.currentSessionId || this.sendCooldown()) return;
     this.messageInput = '';
-    this.sendCooldown = true;
-    setTimeout(() => {
-      this.sendCooldown = false;
-      this.cdr.detectChanges();
-    }, 1000);
+    this.sendCooldown.set(true);
+    timer(1000).pipe(take(1)).subscribe(() => this.sendCooldown.set(false));
     await this.chatService.sendMessage(this.currentSessionId, text);
   }
 
@@ -115,41 +112,38 @@ export class ChatComponent implements OnChanges, OnDestroy, AfterViewChecked {
   }
 
   private onMessage(dto: ChatMessageDto): void {
-    this.messages.push({
+    this.shouldScroll = true;
+    this.messages.update(msgs => [...msgs, {
       id: dto.id,
       type: 'chat',
       senderName: dto.senderName,
       content: dto.content,
       createdAt: new Date(dto.createdAt),
       own: dto.senderId === this.currentUserId
-    });
-    this.shouldScroll = true;
-    this.cdr.detectChanges();
+    }]);
   }
 
   private onSystemMessage(text: string): void {
-    this.messages.push({
+    this.shouldScroll = true;
+    this.messages.update(msgs => [...msgs, {
       id: crypto.randomUUID(),
       type: 'system',
       content: text,
       createdAt: new Date()
-    });
-    this.shouldScroll = true;
-    this.cdr.detectChanges();
+    }]);
   }
 
   private onHistory(items: ChatMessageDto[]): void {
     this.authService.getMe().pipe(take(1)).subscribe(me => {
-      this.messages = items.map(dto => ({
+      this.shouldScroll = true;
+      this.messages.set(items.map(dto => ({
         id: dto.id,
         type: 'chat' as const,
         senderName: dto.senderName,
         content: dto.content,
         createdAt: new Date(dto.createdAt),
         own: dto.senderId === me.anonymousId
-      }));
-      this.shouldScroll = true;
-      this.cdr.detectChanges();
+      })));
     });
   }
 }

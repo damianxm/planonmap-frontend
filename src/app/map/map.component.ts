@@ -1,4 +1,15 @@
-import { Component, Input, Output, EventEmitter, OnChanges, OnDestroy, AfterViewInit, SimpleChanges, inject } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnChanges,
+  OnDestroy,
+  AfterViewInit,
+  SimpleChanges,
+  inject,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MapItemsService, MarkerDto } from '../services/mapitems.service';
 
@@ -7,13 +18,41 @@ export interface MapClickEvent {
   lng: number;
 }
 
-declare const L: any;
+interface LeafletLatLng {
+  lat: number;
+  lng: number;
+}
+
+interface LeafletMouseEvent {
+  latlng: LeafletLatLng;
+}
+
+interface LeafletLayer {
+  addTo(map: LeafletMap): LeafletLayer;
+  remove(): void;
+  bindPopup(content: HTMLElement | string): LeafletLayer;
+}
+
+interface LeafletMap {
+  setView(center: [number, number], zoom: number): LeafletMap;
+  on(event: string, handler: (e: LeafletMouseEvent) => void): void;
+  remove(): void;
+}
+
+interface LeafletStatic {
+  map(id: string, options?: Record<string, unknown>): LeafletMap;
+  marker(latlng: [number, number]): LeafletLayer;
+  maplibreGL(options: { style: string; attribution: string }): LeafletLayer;
+}
+
+declare const L: LeafletStatic;
 
 @Component({
   selector: 'app-map',
   standalone: true,
   templateUrl: './map.component.html',
-  styleUrl: './map.component.scss'
+  styleUrl: './map.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() sessionId = '';
@@ -21,8 +60,8 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   private readonly mapItems = inject(MapItemsService);
 
-  private map: any;
-  private leafletMarkers = new Map<number, any>();
+  private map: LeafletMap | null = null;
+  private leafletMarkers = new Map<number, LeafletLayer>();
   private subs: Subscription[] = [];
   private currentSessionId = '';
 
@@ -33,7 +72,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
       attribution: '&copy; <a href="https://openfreemap.org">OpenFreeMap</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map);
 
-    this.map.on('click', (e: any) => this.onMapClick(e));
+    this.map.on('click', (e: LeafletMouseEvent) => this.onMapClick(e));
 
     this.subs.push(
       this.mapItems.markers$.subscribe(markers => this.loadMarkers(markers)),
@@ -62,12 +101,10 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
       this.mapItems.leaveSession(this.currentSessionId);
     }
     this.subs.forEach(s => s.unsubscribe());
-    if (this.map) {
-      this.map.remove();
-    }
+    this.map?.remove();
   }
 
-  private onMapClick(e: any): void {
+  private onMapClick(e: LeafletMouseEvent): void {
     if (!this.currentSessionId) return;
     this.mapClick.emit({ lat: e.latlng.lat, lng: e.latlng.lng });
   }
@@ -88,7 +125,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
       popup.appendChild(document.createTextNode(marker.description));
     }
     const lm = L.marker([marker.latitude, marker.longitude])
-      .addTo(this.map)
+      .addTo(this.map!)
       .bindPopup(popup);
     this.leafletMarkers.set(marker.id, lm);
   }

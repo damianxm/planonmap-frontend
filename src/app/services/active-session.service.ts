@@ -1,5 +1,6 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { Injectable, inject, signal, DestroyRef } from '@angular/core';
+import { firstValueFrom, switchMap, EMPTY } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SessionService, ParticipantDto } from './session.service';
 import { ChatService } from './chat.service';
 
@@ -9,6 +10,7 @@ const STORAGE_KEY = 'infomap_session_id';
 export class ActiveSessionService {
   private readonly sessionService = inject(SessionService);
   private readonly chatService = inject(ChatService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly sessionId = signal('');
   readonly sessionCode = signal('');
@@ -20,12 +22,13 @@ export class ActiveSessionService {
   constructor() {
     this.tryRestore();
 
-    this.chatService.systemMessage$.subscribe(() => {
-      const id = this.sessionId();
-      if (id) {
-        this.sessionService.getParticipants(id).subscribe(p => this.participants.set(p));
-      }
-    });
+    this.chatService.systemMessage$.pipe(
+      takeUntilDestroyed(this.destroyRef),
+      switchMap(() => {
+        const id = this.sessionId();
+        return id ? this.sessionService.getParticipants(id) : EMPTY;
+      })
+    ).subscribe(p => this.participants.set(p));
   }
 
   async create(name: string, displayName: string): Promise<void> {

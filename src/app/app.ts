@@ -1,4 +1,4 @@
-import { Component, signal, inject, effect } from '@angular/core';
+import { Component, signal, inject, effect, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MapComponent, MapClickEvent } from './map/map.component';
 import { SidePanelComponent } from './side-panel/side-panel.component';
@@ -9,13 +9,14 @@ import { ActiveSessionService } from './services/active-session.service';
   selector: 'app-root',
   imports: [RouterOutlet, MapComponent, SidePanelComponent, BottomPanelComponent],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class App {
   readonly activeSession = inject(ActiveSessionService);
-  pendingCoords = signal<MapClickEvent | null>(null);
-  panelOpen = signal(false);
-  cookieNoticeVisible = signal(!localStorage.getItem('infomap_cookie_ok'));
+  readonly pendingCoords = signal<MapClickEvent | null>(null);
+  readonly panelOpen = signal(false);
+  readonly cookieNoticeVisible = signal(!localStorage.getItem('infomap_cookie_ok'));
 
   constructor() {
     effect(() => {

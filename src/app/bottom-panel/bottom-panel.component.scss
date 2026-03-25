@@ -3,7 +3,7 @@
   bottom: 20px;
   left: 20px;
   right: 400px; // leaves room for side panel (360px + 20px right + 20px gap)
-  z-index: 1000;
+  z-index: var(--z-panel);
   pointer-events: none;
 }
 
