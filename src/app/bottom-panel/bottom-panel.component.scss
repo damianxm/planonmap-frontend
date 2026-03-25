@@ -165,6 +165,10 @@
     bottom: 16px;
     left: 8px;
     right: 8px;
+
+    &.cookie-visible {
+      bottom: 68px;
+    }
   }
 
   .panel {

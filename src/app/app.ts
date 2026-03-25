@@ -15,6 +15,7 @@ export class App {
   readonly activeSession = inject(ActiveSessionService);
   pendingCoords = signal<MapClickEvent | null>(null);
   panelOpen = signal(false);
+  cookieNoticeVisible = signal(!localStorage.getItem('infomap_cookie_ok'));
 
   constructor() {
     effect(() => {
@@ -22,5 +23,10 @@ export class App {
         this.panelOpen.set(true);
       }
     });
+  }
+
+  dismissCookieNotice(): void {
+    localStorage.setItem('infomap_cookie_ok', '1');
+    this.cookieNoticeVisible.set(false);
   }
 }

@@ -4,6 +4,54 @@
   min-height: 0;
 }
 
+// ── Cookie bar ────────────────────────────────────────────────────────────────
+
+.cookie-bar {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px 10px 20px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 40px;
+  white-space: nowrap;
+
+  span {
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  button {
+    padding: 4px 14px;
+    border-radius: 20px;
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+  }
+
+  @media (max-width: 640px) {
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    transform: none;
+    white-space: normal;
+  }
+}
+
 // ── Mobile toggle FAB ─────────────────────────────────────────────────────────
 
 .fab-toggle {

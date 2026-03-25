@@ -24,6 +24,14 @@
   [sessionId]="activeSession.sessionId()"
   [coords]="pendingCoords()"
   (coordsConsumed)="pendingCoords.set(null)"
+  [class.cookie-visible]="cookieNoticeVisible()"
 ></app-bottom-panel>
 
 <router-outlet />
+
+@if (cookieNoticeVisible()) {
+<div class="cookie-bar">
+  <span>This site uses cookies for session management.</span>
+  <button (click)="dismissCookieNotice()">OK</button>
+</div>
+}
