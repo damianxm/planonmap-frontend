@@ -22,10 +22,6 @@ export class SessionService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiUrl}/api/v1/sessions`;
 
-  getSessions(): Observable<SessionDto[]> {
-    return this.http.get<SessionDto[]>(this.baseUrl, { withCredentials: true });
-  }
-
   createSession(name: string, displayName?: string): Observable<SessionDto> {
     return this.http.post<SessionDto>(this.baseUrl, { name, displayName }, { withCredentials: true });
   }
